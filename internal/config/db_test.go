@@ -13,7 +13,10 @@ func TestConnectDB(t *testing.T) {
 		log.Fatalf("Error loading .env file")
 	}
 
-	db := ConnectDB()
+	db, err := ConnectDB()
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
 	sqlDB, err := db.DB()
 	if err != nil {
 		t.Fatalf("Failed to get generic database object: %v", err)
