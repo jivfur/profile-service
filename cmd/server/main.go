@@ -15,7 +15,10 @@ func main() {
 		log.Fatalf("Error loading .env file")
 	}
 	// Connect to DB
-	db := config.ConnectDB()
+	db, err := config.ConnectDB()
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
 
 	// Run AutoMigrate to create/update tables
 	if err := db.AutoMigrate(&model.Profile{}, &model.Photo{}, &model.Location{}); err != nil {

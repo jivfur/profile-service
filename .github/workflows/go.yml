@@ -44,7 +44,7 @@ jobs:
     - name: Set up ENV file
       run: |
         echo DB_USER=joto_user >> .env
-        echo DB_PASSWORD=joto_pass >> .env
+        echo DB_PASS=joto_pass >> .env
         echo DB_NAME=joto_db >> .env
         echo DB_HOST=127.0.0.1 >> .env
         echo DB_PORT=3306 >> .env
