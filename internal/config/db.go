@@ -5,24 +5,31 @@ import (
 	"log"
 	"os"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 // ConnectDB initializes and returns a GORM DB instance
-func ConnectDB() *gorm.DB {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASS"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"),
-	)
-
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+func ConnectDB() (*gorm.DB, error) {
+	// Load the .env file
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Println("No .env file found")
 	}
 
-	return db
+	user := os.Getenv("DB_USER")
+	pass := os.Getenv("DB_PASSWORD")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	dbname := os.Getenv("DB_NAME")
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, pass, host, port, dbname)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Printf("Failed to connect to database: %v", err)
+		return nil, err
+	}
+
+	return db, nil
 }
