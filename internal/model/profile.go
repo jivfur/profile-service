@@ -50,3 +50,31 @@ type Location struct {
 	Longitude float64   `gorm:"not null"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 }
+
+var Genders = map[string]bool{
+	"MALE":        true,
+	"FEMALE":      true,
+	"TRANS MAN":   true,
+	"TRANS WOMAN": true,
+	"NON BINARY":  true,
+	"QUEER":       true,
+}
+
+var SexualOrientation = map[string]bool{
+	"GAY":        true,
+	"STRAIGHT":   true,
+	"BISEXUAL":   true,
+	"ASEXUAL":    true,
+	"DEMISEXUAL": true,
+	"PANSEXUAL":  true,
+	"QUEER":      true,
+}
+
+var SexualPosition = map[string]bool{
+	"TOP":         true,
+	"VERS TOP":    true,
+	"VERSATILE":   true,
+	"VERS BOTTOM": true,
+	"BOTTOM":      true,
+	"SIDE":        true,
+}

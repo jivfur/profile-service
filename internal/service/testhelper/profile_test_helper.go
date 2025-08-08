@@ -8,6 +8,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/jivfur/profile-service/internal/model"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type ProfileOption func(*model.Profile)
@@ -25,11 +26,13 @@ func NewFakeProfile(opts ...ProfileOption) *model.Profile {
 	bio := gofakeit.Paragraph(1, 3, 5, "\n")
 	city := gofakeit.City()
 	photoURL := UUID + ".jpg"
+	dob := time.Now().AddDate(-20, 0, 0)
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
 	p := &model.Profile{
 		ID:                UUID,
 		Username:          gofakeit.Username(),
 		Email:             gofakeit.Email(),
-		PasswordHash:      "hashedpassword",
+		PasswordHash:      string(hashedPassword),
 		Name:              gofakeit.Name(),
 		Bio:               &bio,
 		Gender:            Genders[rand.Intn(len(Genders))],
@@ -37,7 +40,7 @@ func NewFakeProfile(opts ...ProfileOption) *model.Profile {
 		SexualPosition:    SexualPosition[rand.Intn(len(SexualPosition))],
 		PhotoURL:          &photoURL, // Simulate a photo URL
 		Location:          &city,
-		DateOfBirth:       ptrTime(gofakeit.Date()),
+		DateOfBirth:       &dob, // 20 years ago
 		Hobbies:           createListOfWords(3),
 		Interests:         createListOfWords(5),
 		EmailVerified:     gofakeit.Bool(),
@@ -59,9 +62,6 @@ func createListOfWords(n int) *string {
 	}
 	joined := strings.Join(hobbies, ",")
 	return &joined
-}
-func ptrTime(t time.Time) *time.Time {
-	return &t
 }
 
 // WithNo sets the named field to its zero value

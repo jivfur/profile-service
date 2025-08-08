@@ -26,24 +26,71 @@ func TestCreateProfile_Success(t *testing.T) {
 		profile  model.Profile
 		expected error
 	}{
-		{name: "Valid Profile",
-			profile:  *testhelper.NewFakeProfile(testhelper.WithCustom("DateOfBirth", time.Now().AddDate(-20, 0, 0))),
-			expected: nil},
-		{name: "Missing ID", profile: model.Profile{
-			Name:         "Test User",
-			Email:        "fake@email.com",
-			PasswordHash: "hashedpassword",
-		}, expected: errors.New("ID is required")},
-		{name: "Missing Email", profile: model.Profile{
-			ID:           "test-id",
-			Name:         "Test User",
-			PasswordHash: "hashedpassword",
-		}, expected: errors.New("email is required")},
-		{name: "Missing Password", profile: model.Profile{
-			ID:    "test-id",
-			Name:  "Test User",
-			Email: "fake@email.com",
-		}, expected: errors.New("password is required")},
+		{
+			name:     "Valid Profile",
+			profile:  *testhelper.NewFakeProfile(),
+			expected: nil,
+		},
+		{
+			name:     "Missing Email",
+			profile:  *testhelper.NewFakeProfile(testhelper.WithNo("Email")),
+			expected: errors.New("email is required"),
+		},
+		{
+			name:     "Invalid Email",
+			profile:  *testhelper.NewFakeProfile(testhelper.WithCustom("Email", "inv@lid-email@domain.com")),
+			expected: errors.New("email is required"),
+		},
+		{
+			name:     "Missing Password",
+			profile:  *testhelper.NewFakeProfile(testhelper.WithNo("PasswordHash")),
+			expected: errors.New("password is required"),
+		},
+		{
+			name:     "Password too short",
+			profile:  *testhelper.NewFakeProfile(testhelper.WithCustom("PasswordHash", "short")),
+			expected: errors.New("password is not the correct length"),
+		},
+		{
+			name:     "Underage Profile",
+			profile:  *testhelper.NewFakeProfile(testhelper.WithCustom("DateOfBirth", time.Now().AddDate(-15, 0, 0))),
+			expected: errors.New("date of birth must be at least 18 years ago"),
+		},
+		{
+			name:     "Underage Profile",
+			profile:  *testhelper.NewFakeProfile(testhelper.WithCustom("DateOfBirth", time.Now().AddDate(+15, 0, 0))),
+			expected: errors.New("date of birth must be at least 18 years ago"),
+		},
+		{
+			name:     "Fake Gender",
+			profile:  *testhelper.NewFakeProfile(testhelper.WithCustom("Gender", "FAKE GENDER")),
+			expected: errors.New("gender is not valid"),
+		},
+		{
+			name:     "No Gender",
+			profile:  *testhelper.NewFakeProfile(testhelper.WithNo("Gender")),
+			expected: nil, // No error
+		},
+		{
+			name:     "Fake Sexual Orientation",
+			profile:  *testhelper.NewFakeProfile(testhelper.WithCustom("SexualOrientation", "FAKE GENDER")),
+			expected: errors.New("sexual orientation is not valid"),
+		},
+		{
+			name:     "No Sexual Orientation",
+			profile:  *testhelper.NewFakeProfile(testhelper.WithNo("SexualOrientation")),
+			expected: nil, // No error
+		},
+		{
+			name:     "Fake Sexual Position",
+			profile:  *testhelper.NewFakeProfile(testhelper.WithCustom("SexualPosition", "FAKE GENDER")),
+			expected: errors.New("sexual position is not valid"),
+		},
+		{
+			name:     "No Sexual Position",
+			profile:  *testhelper.NewFakeProfile(testhelper.WithNo("SexualPosition")),
+			expected: nil, // No error
+		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
