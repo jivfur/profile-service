@@ -9,6 +9,9 @@ import (
 type Profile struct {
 	ID                string     `gorm:"type:char(36);primaryKey"`      // UUID format
 	UID               *string    `gorm:"type:varchar(255);uniqueIndex"` // Firebase UID, nullable if used
+	Username          string     `gorm:"type:varchar(255);uniqueIndex;not null"`
+	Email             string     `gorm:"type:varchar(255);uniqueIndex;not null"`
+	PasswordHash      string     `gorm:"type:varchar(255);not null"` // Store hashed password
 	Name              string     `gorm:"type:varchar(255);not null"`
 	Bio               *string    `gorm:"type:text"`
 	Gender            string     `gorm:"type:enum('MALE','FEMALE','TRANS MAN','TRANS WOMAN','NON BINARY','QUEER');not null"`
